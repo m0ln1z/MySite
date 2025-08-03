@@ -136,6 +136,38 @@ document.addEventListener("DOMContentLoaded", function () {
     videoElement.setAttribute('disablepictureinpicture', 'true');
     videoElement.setAttribute('controlslist', 'nodownload nofullscreen noremoteplayback');
   }
+
+  // Protect ayanami video from interactions
+  const ayanamiVideo = document.querySelector('.ayanami');
+  if (ayanamiVideo && isMobile()) {
+    ayanamiVideo.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    });
+
+    ayanamiVideo.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    });
+
+    ayanamiVideo.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    });
+
+    ayanamiVideo.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
+    });
+
+    // Disable controls for ayanami video
+    ayanamiVideo.removeAttribute('controls');
+    ayanamiVideo.setAttribute('disablepictureinpicture', 'true');
+    ayanamiVideo.setAttribute('controlslist', 'nodownload nofullscreen noremoteplayback');
+  }
 });
 
 const expandButton = document.getElementById('expand-button');
