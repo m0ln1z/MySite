@@ -4,6 +4,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -454,4 +455,231 @@ body {
     left: 25px;
     margin: 0;
     border-radius: 20px;
+}
+
+/* Mobile Adaptation */
+@media screen and (max-width: 768px) {
+    body {
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .container {
+        height: auto;
+        min-height: 100vh;
+        padding: 20px;
+        transform: none !important;
+    }
+
+    .content-wrapper {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .left-content {
+        width: 100%;
+        max-width: 350px;
+    }
+
+    .rectangle {
+        width: 100%;
+        max-width: 320px;
+        height: auto;
+        min-height: 400px;
+        margin: 0;
+    }
+
+    .avatar {
+        width: 180px;
+        height: 180px;
+    }
+
+    .nickname {
+        font-size: 20px;
+    }
+
+    .social-links img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .social-links img:hover {
+        filter: none;
+        transform: scale(1.1);
+    }
+
+    .spotifyplayer {
+        width: 100%;
+        max-width: 340px;
+        height: auto;
+        min-height: 130px;
+        margin: 10px 0;
+    }
+
+    .spotify-container {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .spotify-container:hover {
+        transform: scale(1.05);
+    }
+
+    .spotify-album-cover {
+        width: 120px;
+        height: 120px;
+        align-self: center;
+    }
+
+    .spotify-info {
+        align-items: center;
+        text-align: center;
+    }
+
+    .progress-container {
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .right-content {
+        position: static;
+        margin-left: 0;
+        width: 100%;
+        max-width: 350px;
+    }
+
+    .rectangle-right {
+        position: static !important;
+        width: 100%;
+        max-width: 350px;
+        height: auto;
+        min-height: 400px;
+        left: auto !important;
+        transform: none !important;
+        opacity: 1 !important;
+        margin: 20px 0;
+        padding: 20px;
+    }
+
+    .rectangle-right.show {
+        opacity: 1;
+        transform: none;
+    }
+
+    .rectangle-button {
+        display: none;
+    }
+
+    .hithere {
+        position: static;
+        padding: 0 0 15px 0;
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .nometa {
+        position: static;
+        padding: 0 0 10px 0;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .email {
+        position: static;
+        padding: 0 0 15px 0;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .ayanami {
+        position: static;
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        left: auto;
+        top: auto;
+        margin: 15px auto 0 auto;
+        display: block;
+    }
+
+    .move-left {
+        transform: none !important;
+    }
+
+    .move-right {
+        transform: none !important;
+    }
+
+    /* Hide background animation circles on mobile for performance */
+    .rectangle div[style*="position: absolute"][style*="border-radius: 50%"],
+    .rectangle-right div[style*="position: absolute"][style*="border-radius: 50%"] {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+
+    .rectangle {
+        max-width: 280px;
+        padding: 15px;
+    }
+
+    .avatar {
+        width: 150px;
+        height: 150px;
+    }
+
+    .nickname {
+        font-size: 18px;
+    }
+
+    .social-links img {
+        width: 24px;
+        height: 24px;
+    }
+
+    .spotifyplayer {
+        max-width: 300px;
+        padding: 12px;
+    }
+
+    .spotify-album-cover {
+        width: 100px;
+        height: 100px;
+    }
+
+    .track-name {
+        font-size: 13px;
+    }
+
+    .artist-name {
+        font-size: 11px;
+    }
+
+    .album-name {
+        font-size: 10px;
+    }
+
+    .rectangle-right {
+        max-width: 300px;
+        padding: 15px;
+    }
+
+    .hithere {
+        font-size: 18px;
+    }
+
+    .nometa, .email {
+        font-size: 13px;
+    }
+
+    .ayanami {
+        max-width: 250px;
+    }
 }

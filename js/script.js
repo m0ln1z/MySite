@@ -78,8 +78,11 @@ function createRandomCircles(rectangleElement) {
 const rectangleElement = document.querySelector(".rectangle");
 const rectangle2Element = document.querySelector(".rectangle-right");
 
-createRandomCircles(rectangleElement);
-createRandomCircles(rectangle2Element);
+// Only create animated circles on desktop for better mobile performance
+if (!isMobile()) {
+  createRandomCircles(rectangleElement);
+  createRandomCircles(rectangle2Element);
+}
 
 document.addEventListener("DOMContentLoaded", function () {
   const videoFiles = [
@@ -112,12 +115,33 @@ const rectangleButton = document.querySelector('.rectangle-button');
 
 let expanded = false;
 
+function isMobile() {
+  return window.innerWidth <= 768;
+}
+
 expandButton.addEventListener('click', () => {
+  // Disable expansion on mobile devices
+  if (isMobile()) {
+    return;
+  }
+  
   expanded = !expanded;
   arrow.classList.toggle('rotate');
   container.classList.toggle('move-left');
   rectangleRight.classList.toggle('show');
   rectangleButton.classList.toggle('move-right');
+});
+
+// Handle window resize for mobile/desktop transitions
+window.addEventListener('resize', () => {
+  if (isMobile()) {
+    // Reset all desktop animations on mobile
+    arrow.classList.remove('rotate');
+    container.classList.remove('move-left');
+    rectangleRight.classList.remove('show');
+    rectangleButton.classList.remove('move-right');
+    expanded = false;
+  }
 });
 
 // Spotify functionality
