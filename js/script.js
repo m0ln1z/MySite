@@ -105,6 +105,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
   videoElement.appendChild(sourceElement);
   videoElement.load();
+
+  // Prevent video interactions on mobile
+  if (isMobile()) {
+    videoElement.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    });
+
+    videoElement.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    });
+
+    videoElement.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    });
+
+    videoElement.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
+    });
+
+    // Disable video controls completely
+    videoElement.removeAttribute('controls');
+    videoElement.setAttribute('disablepictureinpicture', 'true');
+    videoElement.setAttribute('controlslist', 'nodownload nofullscreen noremoteplayback');
+  }
 });
 
 const expandButton = document.getElementById('expand-button');
@@ -143,6 +174,64 @@ window.addEventListener('resize', () => {
     expanded = false;
   }
 });
+
+// Prevent zoom and scrolling on mobile devices
+if (isMobile()) {
+  // Prevent pinch zoom
+  document.addEventListener('gesturestart', function (e) {
+    e.preventDefault();
+  });
+
+  document.addEventListener('gesturechange', function (e) {
+    e.preventDefault();
+  });
+
+  document.addEventListener('gestureend', function (e) {
+    e.preventDefault();
+  });
+
+  // Prevent double-tap zoom
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function (event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, false);
+
+  // Prevent horizontal scrolling
+  document.addEventListener('touchmove', function(e) {
+    if (e.touches.length > 1) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  // Prevent context menu on long press
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+  });
+
+  // Additional video protection for iOS Safari
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  if (isIOS) {
+    document.addEventListener('touchstart', function(e) {
+      if (e.target.tagName === 'VIDEO') {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    }, { passive: false });
+
+    document.addEventListener('touchmove', function(e) {
+      if (e.target.tagName === 'VIDEO') {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    }, { passive: false });
+  }
+}
 
 // Spotify functionality
 let currentTrackData = null;
