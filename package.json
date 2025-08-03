@@ -1,0 +1,9 @@
+{
+  "name": "my-site",
+  "version": "1.0.0",
+  "description": "Personal website with Spotify integration",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Static site - no build required'"
+  }
+}
