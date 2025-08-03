@@ -76,11 +76,9 @@ function createRandomCircles(rectangleElement) {
 }
 
 const rectangleElement = document.querySelector(".rectangle");
-const spotifyPlayerElement = document.querySelector(".spotifyplayer");
 const rectangle2Element = document.querySelector(".rectangle-right");
 
 createRandomCircles(rectangleElement);
-createRandomCircles(spotifyPlayerElement);
 createRandomCircles(rectangle2Element);
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -124,6 +122,114 @@ expandButton.addEventListener('click', () => {
 
 // Spotify functionality
 let currentTrackData = null;
+let progressInterval = null;
+
+function formatTime(milliseconds) {
+  if (!milliseconds || isNaN(milliseconds)) return '0:00';
+  
+  const seconds = Math.floor(milliseconds / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+function updateProgress(currentMs, totalMs, isPlaying) {
+  const progressFill = document.getElementById('progress-fill');
+  const currentTimeEl = document.getElementById('current-time');
+  const totalTimeEl = document.getElementById('total-time');
+  
+  if (!progressFill || !currentTimeEl || !totalTimeEl) return;
+  
+  const progressPercent = totalMs > 0 ? (currentMs / totalMs) * 100 : 0;
+  
+  progressFill.style.width = `${Math.min(progressPercent, 100)}%`;
+  currentTimeEl.textContent = formatTime(currentMs);
+  totalTimeEl.textContent = formatTime(totalMs);
+}
+
+function startProgressUpdate(trackData) {
+  if (progressInterval) {
+    clearInterval(progressInterval);
+  }
+  
+  if (!trackData?.playback?.isPlaying) return;
+  
+  let currentProgress = trackData.playback.progressMs || 0;
+  const duration = trackData.duration || 0;
+  const startTime = Date.now();
+  
+  progressInterval = setInterval(() => {
+    const elapsed = Date.now() - startTime;
+    const newProgress = currentProgress + elapsed;
+    
+    if (newProgress >= duration) {
+      clearInterval(progressInterval);
+      updateProgress(duration, duration, false);
+      return;
+    }
+    
+    updateProgress(newProgress, duration, true);
+  }, 1000);
+}
+
+function updateSpotifyPlayer(data) {
+  const albumImage = document.getElementById('spotify-album-image');
+  const trackName = document.getElementById('spotify-track-name');
+  const artistName = document.getElementById('spotify-artist-name');
+  const albumName = document.getElementById('spotify-album-name');
+  const playingAnimation = document.querySelector('.playing-animation');
+  
+  if (!albumImage || !trackName || !artistName || !albumName) return;
+  
+  if (data && !data.error) {
+    // Update album cover
+    const albumCover = data.album?.images?.[0]?.url || data.album?.images?.[1]?.url;
+    if (albumCover) {
+      albumImage.src = albumCover;
+      albumImage.style.display = 'block';
+    } else {
+      albumImage.style.display = 'none';
+    }
+    
+    // Update text info
+    trackName.textContent = data.name || 'Unknown Track';
+    artistName.textContent = data.artist?.map(a => a.name).join(', ') || 'Unknown Artist';
+    albumName.textContent = data.album?.name || 'Unknown Album';
+    
+    // Update progress
+    updateProgress(
+      data.playback?.progressMs || 0,
+      data.duration || 0,
+      data.playback?.isPlaying || false
+    );
+    
+    // Show/hide playing animation
+    if (playingAnimation) {
+      if (data.playback?.isPlaying) {
+        playingAnimation.classList.add('active');
+        startProgressUpdate(data);
+      } else {
+        playingAnimation.classList.remove('active');
+        if (progressInterval) {
+          clearInterval(progressInterval);
+        }
+      }
+    }
+  } else {
+    // Error state
+    trackName.textContent = 'No track playing';
+    artistName.textContent = 'Connect to Spotify';
+    albumName.textContent = '';
+    albumImage.style.display = 'none';
+    
+    if (playingAnimation) {
+      playingAnimation.classList.remove('active');
+    }
+    
+    updateProgress(0, 0, false);
+  }
+}
 
 async function fetchCurrentTrack() {
   try {
@@ -131,21 +237,14 @@ async function fetchCurrentTrack() {
     if (response.ok) {
       const data = await response.json();
       currentTrackData = data;
-      updateSpotifyTooltip(data);
+      updateSpotifyPlayer(data);
       return data;
     }
   } catch (error) {
     console.error('Error fetching Spotify data:', error);
+    updateSpotifyPlayer({ error: 'Failed to load' });
   }
   return null;
-}
-
-function updateSpotifyTooltip(data) {
-  const spotifyContainer = document.querySelector('.spotifynow');
-  if (spotifyContainer && data && !data.error) {
-    const tooltip = `${data.name} by ${data.artist?.map(a => a.name).join(', ')} - ${data.album.name}`;
-    spotifyContainer.title = tooltip;
-  }
 }
 
 async function openSpotifyTrack() {
@@ -171,16 +270,7 @@ document.addEventListener('DOMContentLoaded', function() {
   fetchCurrentTrack();
 });
 
-// Refresh Spotify widget and data every 30 seconds
+// Refresh Spotify data every 15 seconds
 setInterval(() => {
-  const spotifyImg = document.getElementById('spotify-widget');
-  if (spotifyImg) {
-    const currentSrc = spotifyImg.src;
-    const baseUrl = currentSrc.split('?')[0];
-    const timestamp = new Date().getTime();
-    spotifyImg.src = baseUrl + '?timestamp=' + timestamp;
-    
-    // Also fetch updated track data
-    fetchCurrentTrack();
-  }
-}, 30000);
+  fetchCurrentTrack();
+}, 15000);

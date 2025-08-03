@@ -44,9 +44,28 @@
 					</div>
 				</div>
 				<div class="spotifyplayer">
-					<div class="spotifynow" onclick="openSpotifyTrack()">
-						<img id="spotify-widget" src="https://m0ln1z.vercel.app/api/spotify"
-							alt="Current Spotify Song">
+					<div class="spotify-container" onclick="openSpotifyTrack()">
+						<div class="spotify-album-cover">
+							<img id="spotify-album-image" src="" alt="Album Cover">
+							<div class="playing-animation">
+								<div class="bar"></div>
+								<div class="bar"></div>
+								<div class="bar"></div>
+								<div class="bar"></div>
+							</div>
+						</div>
+						<div class="spotify-info">
+							<div class="track-name" id="spotify-track-name">Loading...</div>
+							<div class="artist-name" id="spotify-artist-name">Loading...</div>
+							<div class="album-name" id="spotify-album-name">Loading...</div>
+							<div class="progress-container">
+								<div class="progress-time" id="current-time">0:00</div>
+								<div class="progress-bar">
+									<div class="progress-fill" id="progress-fill"></div>
+								</div>
+								<div class="progress-time" id="total-time">0:00</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
